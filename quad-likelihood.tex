@@ -1,5 +1,15 @@
-\documentclass[12pt]{article}
+\documentclass[11pt]{scrartcl}
 
+\usepackage{xspace}
+\usepackage{color}
+ 
+\newcommand{\com}[2]{\xspace\textcolor{red}{\textbf{Comment by #1: #2}}}
+
+
+\newcommand{\dt}[1]{\ensuremath{\Delta t_{\mathrm{#1}}}\xspace}
+%\newcommand{\truedt}{\ensuremath{\Delta t_{\mathrm{true}}}\xspace}
+%\newcommand{\modeldt}{\ensuremath{\Delta t_{\mathrm{model}}}\xspace}
+%\newcommand{\obsdt}{\ensuremath{\Delta t_{\mathrm{obs}}}\xspace}
 
 
 \begin{document}
@@ -15,24 +25,29 @@ The current way of expressing COSMOGRAIL results for quads is to give 6 dependen
 
 \section{The problem}
 
-\begin{enumerate}
+\begin{itemize}
 \item Assuming that these 3 ``independent'' point and uncertainty estimates are truly independent is wrong (the true delays are, but not their measurements). 
 \item Selecting the 3 delays among 6 is arbitrary
 \item Using all 6 of them without taking into account their covariances is certainly wrong
-\end{enumerate}
+\end{itemize}
 
 And so it's not fully clear how to write a likelihood of lens model predictions, given COSMOGRAIL measurements.
 
-\section{The fix (in construction)}
+\section{The fix (under construction)}
 
-We want to propose a classical form of the likelihood to use when modelling our measurements. If we assume that all errors are Gaussian, this would be
-
+We want to propose (and give in our publications) a classical form of the likelihood to be used when modeling our measurements. If we assume that all errors are Gaussian, this would be
 
 \begin{equation}
-p(\Delta t)
+p(\dt{model} | \mathrm{obs}) = \frac{1}{(2 \pi)^{n/2} |\Sigma|^{1/2}}\exp\left( -\frac{1}{2} (\dt{model}-\dt{obs})^T\Sigma^{-1}(\dt{model}-\dt{obs}) \right)
 \end{equation}
 
+where $\Sigma \approx \textrm{Cov}(\dt{obs})$ is an estimation of the covariance that we would give.
 
+\begin{itemize}
+\item We \emph{think} that writing this using 3 delays such as (AB, AC, AD) is correct, and the associated 3x3 covariance matrix does in fact capture the full information contained in our measurements, \emph{even if the light curve of A is of poor quality and the choice of BA, BC, BD seems apparently ``better''}. The choice of A as a reference does not matter, as long as the 3x3 covariance matrix is given together with the 3 delay estimates. Test this ?
+\item For 6 delays, the covariance matrix would be 6x6. But this matrix is clearly redundant (BC = AC - AB exactly, for every single measurement), while it can't encode this redundancy. Our feeling is that using it in the above equation is wrong and would result in an overly tight likelihood. If we want to use the 6x6 matrix nevertheless (because of our special conservative PyCS way of computing variances ignoring the true delays), can we modify the above equation to compensate for using redundant information ?
+
+\end{itemize}
 
 \end{document}
 
