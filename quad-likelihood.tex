@@ -1,0 +1,38 @@
+\documentclass[12pt]{article}
+
+
+
+\begin{document}
+
+\title{Paragraph on how to express the likelihood of a model given COSMOGRAIL time-delay measurements for quad lenses}
+\date{\today}
+\maketitle
+
+
+\section{The current state}
+
+The current way of expressing COSMOGRAIL results for quads is to give 6 dependent -- and consistent -- time-delay estimations, without any estimates of the covariances between these 6 measurements\footnote{We only check visually that the correlations between residuals behave as expected.}. This is described in Section 3 of the PyCS paper. The motivation for giving 6 measurements is that we don't want to pick a priori one of the QSO-images as reference. Note that delivering these 6 \emph{dependent} estimates does contain part of the information that would otherwise go into a covariance matrix associated with giving only 3 ``independent'' delays such as AB, AC and AD. Indeed, a tight covariance between AB and AC (for example) would tell that the delay BC is well constrained. Currently, we just give this delay BC. When fitting a lens model, one currently selects a posteriori 3 ``independent'' delays with small error bars, and one would pick this BC. That's how it was done so far.
+
+\section{The problem}
+
+\begin{enumerate}
+\item Assuming that these 3 ``independent'' point and uncertainty estimates are truly independent is wrong (the true delays are, but not their measurements). 
+\item Selecting the 3 delays among 6 is arbitrary
+\item Using all 6 of them without taking into account their covariances is certainly wrong
+\end{enumerate}
+
+And so it's not fully clear how to write a likelihood of lens model predictions, given COSMOGRAIL measurements.
+
+\section{The fix (in construction)}
+
+We want to propose a classical form of the likelihood to use when modelling our measurements. If we assume that all errors are Gaussian, this would be
+
+
+\begin{equation}
+p(\Delta t)
+\end{equation}
+
+
+
+\end{document}
+
