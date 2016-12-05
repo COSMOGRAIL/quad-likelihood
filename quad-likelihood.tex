@@ -47,6 +47,10 @@ where $\Sigma \approx \textrm{Cov}(\dt{obs})$ is an estimation of the covariance
 \item We \emph{think} that writing this using 3 delays such as (AB, AC, AD) is correct, and the associated 3x3 covariance matrix does in fact capture the full information contained in our measurements, \emph{even if the light curve of A is of poor quality and the choice of BA, BC, BD seems apparently ``better''}. The choice of A as a reference does not matter, as long as the 3x3 covariance matrix is given together with the 3 delay estimates. Test this ?
 \item For 6 delays, the covariance matrix would be 6x6. But this matrix is clearly redundant (BC = AC - AB exactly, for every single measurement), while it can't encode this redundancy. Our feeling is that using it in the above equation is wrong and would result in an overly tight likelihood. If we want to use the 6x6 matrix nevertheless (because of our special conservative PyCS way of computing variances ignoring the true delays), can we modify the above equation to compensate for using redundant information ?
 
+\subsection{question for Stackexchange}
+
+
+
 \end{itemize}
 
 \end{document}
