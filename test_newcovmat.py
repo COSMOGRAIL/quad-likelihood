@@ -55,7 +55,7 @@ if 1:
 	# TODO: there is something I don't get here. If I use the covariance matrix of delays (cov) calculated from above, that matrix is singular, i.e. cannot be inverted in the proba function. (!?)
 
 	# I use covsamples instead of cov in the following. That's not at all a matrix of delays, but for testing purposes it works...
-	cov = covsamples
+	cov = cov
 
 # This is the result I get from above
 AB = -8.8
@@ -120,6 +120,15 @@ for dt in dtAB:
 
 plt.plot(dtAB, probAB/max(probAB), 'b')
 plt.plot(dtAB, probABreduc/max(probABreduc), '--r')
+
+
+dtBA = np.linspace(-AB-3, -AB+3, 100)
+probBAreduc = []
+for dt in dtBA:
+	dtmodelsreduc = [dt, BC]
+	probBAreduc.append(proba(dtmodelsreduc, dtobsreducB, covmatreducA, n=2))
+
+plt.plot(dtAB, probBAreduc/max(probBAreduc), '--k')
 plt.show()
 
 
