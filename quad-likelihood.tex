@@ -52,13 +52,13 @@ seems apparently ``better''}. The choice of A as a reference does not
 matter, as long as the 3x3 covariance matrix is given together with the 
 3 delay estimates. Test this ? \com{VB}{This is indeed completely True, 
 when using a covariance matrix of AB, AC and BC with each shifts (A, B, 
-C) randomly picked. It varies a bit when considering the sub-matrix AB, 
+C) randomly picked} (don't say "randomly picked", more details would be needed to understand the test and what was tested). \com{VB}{It varies a bit when considering the sub-matrix AB, 
 AC, BC created with the PyCS procedure.}
 
 
 \item For 6 delays, the covariance matrix would be 6x6. But this matrix 
 is clearly redundant (BC = AC - AB exactly, for every single 
-measurement), while it can't encode this redundancy. Our feeling is that 
+measurement). A real covariance matrix would be singular in this case, but our PyCS-way of computing it might avoid this. Still, our feeling is that 
 using it in the above equation is wrong and would result in an overly 
 tight likelihood.\com{VB}{Indeed, we can't use the above equation, 
 because it {\textbf won't} work with a matrix whose determinant is 
@@ -77,6 +77,7 @@ then its full use would be forbidden by the math themselves. We should
 instead provide the four 3x3 sub-matrices and say that we recommend 
 either to pick a reference image, or (better!) to run the analysis with 
 the four images as reference turn in turn and take the average.}
+Yes, I kind of agree.
 
 \end{itemize}
 \newpage
@@ -84,7 +85,7 @@ the four images as reference turn in turn and take the average.}
 
 Let's say I measure two values A and B $N$ times
 (say $N=1000$), and I build the value C as a function of A and B, 
-say C=A+B.\\
+say C=A+B.\\ \com{mt}{mention noise, speak about random variables}
 \\
 From my $N$ measurements, I build a vector 
 with their mean value $M_{obs}=(A_{obs}, B_{obs}, C_{obs})$ and a 
@@ -115,8 +116,8 @@ However, since C = A+B, the covariance matrix will have a null
 determinant and cannot be inverted. Thus, I cannot compute probabilities 
 using the equation above.\\ 
 \\
-If I am interested only of the probability distribution of $A_{model}$ 
-over the range [$A_{obs}-X$, $A_{obs}+X$], fixing $B_{model} = B_{obs}$ 
+If I am interested only in the probability distribution of $A_{model}$ 
+over the range [$A_{obs}-X$, $A_{obs}+X$]\com{mt}{I don't get this}, fixing $B_{model} = B_{obs}$ 
 and $C_{model} = C_{obs}$, I can build from my observations the two 
 subsets $M_{ABobs}=(A_{obs}, B_{obs})$ and $M_{ACobs} = (A_{obs}, 
 C_{obs})$, as well as the associated covariance matrices
