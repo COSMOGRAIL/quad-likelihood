@@ -85,7 +85,9 @@ Yes, I kind of agree.
 
 Let's say I measure two values A and B $N$ times
 (say $N=1000$), and I build the value C as a function of A and B, 
-say C=A+B.\\ \com{mt}{mention noise, speak about random variables}
+say C=A+B.\\ \com{mt}{mention noise, speak about random 
+variables}\com{vb}{Not yet (that's question 2), let's start by assuming 
+that my measurement is noiseless}
 \\
 From my $N$ measurements, I build a vector 
 with their mean value $M_{obs}=(A_{obs}, B_{obs}, C_{obs})$ and a 
@@ -117,10 +119,11 @@ determinant and cannot be inverted. Thus, I cannot compute probabilities
 using the equation above.\\ 
 \\
 If I am interested only in the probability distribution of $A_{model}$ 
-over the range [$A_{obs}-X$, $A_{obs}+X$]\com{mt}{I don't get this}, fixing $B_{model} = B_{obs}$ 
-and $C_{model} = C_{obs}$, I can build from my observations the two 
-subsets $M_{ABobs}=(A_{obs}, B_{obs})$ and $M_{ACobs} = (A_{obs}, 
-C_{obs})$, as well as the associated covariance matrices
+% over the range [$A_{obs}-X$, $A_{obs}+X$]\com{mt}{I don't get this}, fixing $B_{model} = B_{obs}$ 
+% and $C_{model} = C_{obs}$,
+I can build from my observations the two 
+vectors $M_{ABobs}=(A_{obs}, B_{obs})$ and $M_{ACobs} = (A_{obs}, 
+C_{obs})$, as well as their associated covariance matrices
 \begin{equation*}
 \Sigma_{AB}=
   \begin{pmatrix}
@@ -136,14 +139,17 @@ C_{obs})$, as well as the associated covariance matrices
 \\
 \\
 No surprises, if I plug theses in the equations above, I find the 
-same result, i.e.\\ $p((A_{model}, B_{model}=B_{obs})|M_{ABobs}) = 
-p((A_{model}, C_{model}=C_{obs})|M_{ACobs})  \ \forall \ A_{model} $ \\
+same result for the probability distribution of $A_{model}$ when I 
+marginalize over $B_{model}$, respectively $C_{model}$, i.e.\\ 
+$p(A_{model}|M_{ABobs}) = 
+p((A_{model}|M_{ACobs})  \ \forall \ A_{model} $ \\
 \\
 And here come the questions:
 \begin{enumerate}
  \item Knowing that C=A+B, is it possible to use a modified version of 
 $\Sigma$ to get the correct probability distribution without using 
-subsets?
+$M_{ABobs}$-$\Sigma_{AB}$, or $M_{ACobs}$-$\Sigma_{AC}$? 
+
  \item Same question, but without knowing the exact function that links 
 C to A and B (i.e assuming C can also be directly measured, but due to 
 unknown measurement errors it is not exactly A+B)?
