@@ -83,12 +83,10 @@ Yes, I kind of agree.
 \newpage
 \subsection{question for Stackexchange}
 
-Let's say I measure two values A and B $N$ times
-(say $N=1000$), and I build the value C as a function of A and B, 
-say C=A+B.\\ \com{mt}{mention noise, speak about random 
-variables}\com{vb}{Not yet (that's question 2), let's start by assuming 
-that my measurement is noiseless}
-\\
+Let's say I measure the values of two variables A and B $N$ times
+(say $N=1000$), and I build the variable C as a function of A and B, 
+e.g. C=A+B.
+
 From my $N$ measurements, I build a vector 
 with their mean value $M_{obs}=(A_{obs}, B_{obs}, C_{obs})$ and a 
 covariance matrix:
@@ -101,27 +99,27 @@ covariance matrix:
     cov(AC) & cov(BC) & cov(CC) \\      
   \end{pmatrix}
 \end{equation*}
-\\
-\\
+
+
 Now, let's say I want to use that covariance matrix to compute a 
 probability distribution for a model of the values of A, B and C, that 
-I call $M_{model} = (A_{model}, B_{model}, C_{model})$
+I call $M_{model} = (A_{model}, B_{model}, C_{model})$. With 
+$n=len(M_{model})$. I have:
 
 \begin{equation*}
-p(M_{model} |M_{obs}) = \frac{1}{(2 \pi)^{3/2} 
+p(M_{model} |M_{obs}) = \frac{1}{(2 \pi)^{n/2} 
 |\Sigma|^{1/2}}\exp\left( -\frac{1}{2} 
 (M_{model}-M_{obs})^T\Sigma^{-1}(M_{model}-M_{obs}) \right)
 \end{equation*}
-\\
-\\
-However, since C = A+B, the covariance matrix will have a null 
-determinant and cannot be inverted. Thus, I cannot compute probabilities 
-using the equation above.\\ 
-\\
-If I am interested only in the probability distribution of $A_{model}$ 
-% over the range [$A_{obs}-X$, $A_{obs}+X$]\com{mt}{I don't get this}, fixing $B_{model} = B_{obs}$ 
-% and $C_{model} = C_{obs}$,
-I can build from my observations the two 
+
+
+However, since C = A+B, the covariance matrix $\Sigma$ will have a null 
+determinant and cannot be inverted. Thus, I cannot compute 
+probabilities 
+using the equation above.
+
+If I am interested only in the probability distribution of $A_{model}$ I 
+can build from my observations the two 
 vectors $M_{ABobs}=(A_{obs}, B_{obs})$ and $M_{ACobs} = (A_{obs}, 
 C_{obs})$, as well as their associated covariance matrices
 \begin{equation*}
@@ -136,25 +134,26 @@ C_{obs})$, as well as their associated covariance matrices
     cov(AC) & cov(CC) \\   
   \end{pmatrix}  
 \end{equation*}
-\\
-\\
+
+
 No surprises, if I plug theses in the equations above, I find the 
 same result for the probability distribution of $A_{model}$ when I 
-marginalize over $B_{model}$, respectively $C_{model}$, i.e.\\ 
+marginalize over $B_{model}$, respectively $C_{model}$, i.e. 
 $p(A_{model}|M_{ABobs}) = 
-p((A_{model}|M_{ACobs})  \ \forall \ A_{model} $ \\
-\\
+p(A_{model}|M_{ACobs})  \ \forall \ A_{model} $ 
+
 And here come the questions:
-\begin{enumerate}
- \item Knowing that C=A+B, is it possible to use a modified version of 
-$\Sigma$ to get the correct probability distribution without using 
+
+ 1) Knowing that C=A+B, is it possible to use a modified version of 
+$M_{obs}$-$\Sigma$ to get the correct probability distribution without 
+using 
 $M_{ABobs}$-$\Sigma_{AB}$, or $M_{ACobs}$-$\Sigma_{AC}$? 
 
- \item Same question, but without knowing the exact function that links 
+ 2) Same question, but without knowing the exact function that links 
 C to A and B (i.e assuming C can also be directly measured, but due to 
 unknown measurement errors it is not exactly A+B)?
  
-\end{enumerate}
+
 
 
 
