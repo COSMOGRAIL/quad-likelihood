@@ -154,7 +154,85 @@ C to A and B (i.e assuming C can also be directly measured, but due to
 unknown measurement errors it is not exactly A+B)?
  
 
+\newpage
+\subsection{Answer for H0LiCOW}
 
+The current way of expressing COSMOGRAIL results for quads is to give 6 
+dependent -- and consistent -- time-delay estimations, without any 
+estimates of the covariances between these 6 measurements (We 
+only check visually that the correlations between residuals behave as 
+expected). This is described in Section 3 of the Tewes et al. 2013 
+paper. The motivation for giving 6 measurements is that we don't want to 
+pick a priori one of the QSO-images as reference, since it might 
+introduce a bias in the results as demonstrated by Ken a while ago. 
+Note that delivering these 6 \emph{dependent} estimates does contain 
+part of the information that would otherwise go into a covariance 
+matrix associated with giving only 3 ``independent'' delays such as AB, 
+AC and AD. Indeed, a tight covariance between AB and AC (for example) 
+would tell that the delay BC is well constrained. Currently, we just 
+give this delay BC. When fitting a lens model, one currently selects a 
+posteriori 3 ``independent'' delays with small error bars, and one would 
+pick this BC. That's how it was done so far.\\
+
+We currently see three issues with that way of doing:
+
+\begin{itemize}
+\item Assuming that these 3 ``independent'' point and uncertainty 
+estimates are truly independent is wrong (the true delays are, but not 
+their measurements). 
+\item Selecting the 3 delays among 6 is arbitrary, at least from the 
+time-delay measurement point of view.
+\item Using all 6 of them without taking into account their covariances 
+is certainly wrong.
+\end{itemize}
+
+So, how to proceed ?\\
+
+What we want is to propose (and give in our future publications) a 
+classical form of the likelihood to be used when modeling our 
+measurements. If we assume that all errors are Gaussian, this 
+would be
+
+\begin{equation}
+p(\dt{model} | \mathrm{obs}) = \frac{1}{(2 \pi)^{n/2} 
+|\Sigma|^{1/2}}\exp\left( -\frac{1}{2} 
+(\dt{model}-\dt{obs})^T\Sigma^{-1}(\dt{model}-\dt{obs}) \right)
+\end{equation}
+
+where $\Sigma \approx \textrm{Cov}(\dt{obs})$ is an estimation of the 
+covariance that we would give.
+
+
+\begin{itemize}
+\item We \emph{think} that writing this using 3 \emph{independent} 
+delays such as (AB, AC, 
+AD) is correct, and the associated 3x3 covariance matrix does in fact 
+capture the full information contained in our measurements, \emph{even 
+if the light curve of A is of poor quality and the choice of BA, BC, BD 
+seems apparently ``better''}. Mock tests showed that the choice of A as 
+a reference does not 
+matter, as long as the 3x3 covariance matrix is given together with the 
+3 delay estimates.
+
+
+\item For 6 delays, the covariance matrix would be 6x6. But this matrix 
+is clearly redundant (BC = AC - AB exactly, for every single 
+measurement). A real covariance matrix would be singular (i.e. det=0 
+thus the matrix is non-invertible) in this case, but our PyCS-way of 
+computing it (being conservative) avoid this. Still, our feeling is 
+that 
+using it in the above equation is wrong and would always result in an 
+overly 
+tight likelihood.
+
+To the best of our knowledge, there is no way to modify the equation 
+above to properly take into account that redundancy in the 6 delays. We 
+will will then instead provide the four 3x3 sub-matrices, i.e. and 
+say that we recommend 
+either to pick a reference image, or (better!) to run the analysis with 
+the four images as reference turn in turn and take the average.
+
+\end{itemize}
 
 
 \end{document}
