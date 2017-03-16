@@ -234,6 +234,35 @@ the four images as reference turn in turn and take the average.
 
 \end{itemize}
 
+\subsection*{Computation of the PyCS covariance matrix}
+
+The computation of the covariance matrix coefficients follow the same 
+principles that we used so far in PyCS (described in Tewes et al. 
+2013.) When drawing simulated light curves, we give them "true" delays 
+picked in a chosen range of possible delays, run the optimizers on each 
+simulation, bin the results according to their true delays and then 
+measure the systematic + random error in each bins. We then combine the 
+worst systematic and worst random error to get the final estimation. In 
+the covariance matrix, we keep this procedure for the diagonal 
+coefficients. For the off-diagonal coefficientss, we do a 2d-binning 
+(since we compute to covariance of two delays), using larger bins to be 
+sure that we have enough estimates per bins, and compute the covariance 
+coefficient in each bin. We then take the larger covariance 
+\com{vb}{Shouldn't it be the closest one to zero ?} as our final 
+estimation, since it is the most conservative value we can assume from 
+the data.
+
+To give you a visual to chew on, here is the "technical" output plot of 
+PyCS on simulated data:
+
+\com{vb}{Add Image}
+
+
+
+\begin{itemize}
+
+\end{itemize}
+
 
 \end{document}
 
