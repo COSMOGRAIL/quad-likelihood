@@ -1,5 +1,6 @@
 """
 Test the new covariance matrix procedure.
+
 """
 
 import numpy as np
@@ -62,21 +63,21 @@ AB = -8.8
 AC = -1.1
 BC = 7.7
 
-ABvAB = cov[0][0]
-ABvAC = cov[0][1]
-ABvBC = cov[0][2]
-ACvAC = cov[1][1]
-ACvBC = cov[1][2]
-BCvBC = cov[2][2]
+#ABvAB = cov[0][0]
+#ABvAC = cov[0][1]
+#ABvBC = cov[0][2]
+#ACvAC = cov[1][1]
+#ACvBC = cov[1][2]
+#BCvBC = cov[2][2]
 
 #print ABvAB, ABvAC, ABvBC, ACvAC, ACvBC, BCvBC
 
-#ABvAB = 0.74
-#ABvAC = 0.43
-#ABvBC = -0.08
-#ACvAC = 0.75
-#ACvBC = 0.08
-#BCvBC = 0.39
+ABvAB = 0.74
+ABvAC = 0.43
+ABvBC = -0.08
+ACvAC = 0.75
+ACvBC = 0.08
+BCvBC = 0.39
 
 
 dtobs = [AB, AC, BC]
@@ -144,7 +145,7 @@ for dt in dtAC:
 	probACreduc.append(proba(dtmodelsreduc, dtobsreducC, covmatreducC, n=2))
 
 plt.plot(dtAC, probAC/max(probAC), 'b')
-plt.plot(dtAC, probACreduc/max(probACreduc), '--r')
+#plt.plot(dtAC, probACreduc/max(probACreduc), '--r')
 plt.show()
 
 

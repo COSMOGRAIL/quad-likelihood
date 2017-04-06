@@ -230,38 +230,78 @@ above to properly take into account that redundancy in the 6 delays. We
 will will then instead provide the four 3x3 sub-matrices, i.e. and 
 say that we recommend 
 either to pick a reference image, or (better!) to run the analysis with 
-the four images as reference turn in turn and take the average.
+the four images as reference turn in turn and take the average. 
+\com{vb}{or even better, to run the analysis with all the possible 
+independent combinations of time delays ?}
 
 \end{itemize}
 
 \subsection*{Computation of the PyCS covariance matrix}
 
-The computation of the covariance matrix coefficients follow the same 
+Initially, we wanted the computation of the covariance matrix 
+coefficients to follow the same 
 principles that we used so far in PyCS (described in Tewes et al. 
-2013.) When drawing simulated light curves, we give them "true" delays 
+2013). When drawing simulated light curves, we give them "true" delays 
 picked in a chosen range of possible delays, run the optimizers on each 
 simulation, bin the results according to their true delays and then 
 measure the systematic + random error in each bins. We then combine the 
-worst systematic and worst random error to get the final estimation. In 
-the covariance matrix, we keep this procedure for the diagonal 
-coefficients. For the off-diagonal coefficientss, we do a 2d-binning 
-(since we compute to covariance of two delays), using larger bins to be 
+worst systematic and worst random error to get the final estimation. 
+When constructing the covariance matrix, we keep this procedure for the 
+diagonal 
+coefficients. For the off-diagonal coefficients, we do a 2d-binning 
+(since we compute to covariance of two different delays), using larger 
+bins to be 
 sure that we have enough estimates per bins, and compute the covariance 
-coefficient in each bin. We then take the larger covariance 
-\com{vb}{Shouldn't it be the closest one to zero ?} as our final 
-estimation, since it is the most conservative value we can assume from 
-the data.
+coefficient in each bin. This time however, we cannot simply pick the 
+highest or lowest coefficients because 
+doing so will not ensure the likelihood to be the most conservative 
+one. The two options we have a this stage are:
+
+\begin{enumerate}
+\item consider all the possible combination of off-diagonal 
+coefficients ($nxn$ 2d-bins would mean $n^6$ combinations for a quad) 
+and take the less constraining likelihood; 
+
+\item compute a single likelihood using all the samples (i.e. no 
+binning) when computing the off-diagonals coefficients, and make sure 
+that when doing the 2d-binning there are no large variations between the 
+coefficients computed from one 2d-bin to another. 
+\end{enumerate}
+
+The second options seems to be the most natural, so we decided to adopt 
+it for the time being. If, for some reason two bins give a very 
+discrepant value for an off-diagonal coefficient -in the sense that the 
+resulting time-delay likelihood is significantly different, that will 
+be interpreted as a sign that something is going on. Whether we should 
+worry or not will probably depend on which system we analyze. Note 
+that in order to get a scatter in the bins not dominated by random 
+fluctuations, we ought to draw more simulated light curves than before. 
+10'000 seems to be a reasonable number from the testing we performed so 
+far.\\
 
 To give you a visual to chew on, here is the "technical" output plot of 
-PyCS on simulated data:
+PyCS on simulated data:\\
 
-\com{vb}{Add Image}
+\com{vb}{Add Image}\\
+
+The diagonal panels display the time-delay error distributions versus 
+the binned true delay estimation. The off-diagonal panels display the 
+covariance in each bins. If there are less than a given number of 
+simulations per 
+bins, the value is discarded (i.e. put to zero, written in red). The 
+corresponding delays and mean covariance coefficients on all the 
+simulations is 
+displayed in the title of each panel. For simplicity, the 6x6 matrix of 
+covariances is printed on the right of the plot. The choice of true 
+delay range used in the drawing of the simulations as well as the 
+number of 1d and 2d bins, minimal 
+number of simulations per bins and total number of simulations are 
+up to the PyCS user. Obviously, we don't want that these choices 
+affect too much the results, and making sure that they don't is part of 
+the sanity checks that should be conducted before publishing the final 
+time-delay likelihoods.
 
 
-
-\begin{itemize}
-
-\end{itemize}
 
 
 \end{document}
