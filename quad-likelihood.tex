@@ -157,24 +157,34 @@ unknown measurement errors it is not exactly A+B)?
 \newpage
 \subsection{Answer for H0LiCOW}
 
+First of all, apologies to Ken and Phil for taking so long to come up 
+with this and blissfully ignoring their reminder so far. Part of the 
+reason is that my hdd decided last fall that it was time for it to die, 
+carrying to the grave a month+ of work including parts of what follows. 
+Took me some time to find the motivation to work on this again, 
+especially since it never really was at the top of my priority list. 
+Anyway.
+
 The current way of expressing COSMOGRAIL results for quads is to give 6 
 dependent -- and consistent -- time-delay estimations, without any 
-estimates of the covariances between these 6 measurements (We 
+estimates of the covariances between these 6 measurements. We 
 only check visually that the correlations between residuals behave as 
-expected). This is described in Section 3 of the Tewes et al. 2013 
-paper. The motivation for giving 6 measurements is that we don't want to 
-pick a priori one of the QSO-images as reference, since it might 
-introduce a bias in the results as demonstrated by Ken a while ago. 
-Note that delivering these 6 \emph{dependent} estimates does contain 
+expected. This is described in Section 3 of the Tewes et al. 2013 
+paper. The motivation for giving 6 measurements is that we do not want 
+to pick a priori one of the QSO-images as reference, since it might 
+introduce a bias in the final time-delay distance as demonstrated by 
+Ken a while ago. Delivering these 6 \emph{dependent} estimates does 
+contain 
 part of the information that would otherwise go into a covariance 
 matrix associated with giving only 3 ``independent'' delays such as AB, 
 AC and AD. Indeed, a tight covariance between AB and AC (for example) 
 would tell that the delay BC is well constrained. Currently, we just 
-give this delay BC. When fitting a lens model, one currently selects a 
-posteriori 3 ``independent'' delays with small error bars, and one would 
-pick this BC. That's how it was done so far.\\
+give this delay BC without any extra information. When fitting a lens 
+model, one currently selects a 
+posteriori 3 ``independent'' delays with small error bars. That's how 
+it was done so far.\\
 
-We currently see three issues with that way of doing:
+Yet:
 
 \begin{itemize}
 \item Assuming that these 3 ``independent'' point and uncertainty 
@@ -186,12 +196,11 @@ time-delay measurement point of view.
 is certainly wrong.
 \end{itemize}
 
-So, how to proceed ?\\
 
-What we want is to propose (and give in our future publications) a 
-classical form of the likelihood to be used when modeling our 
-measurements. If we assume that all errors are Gaussian, this 
-would be
+What we want is to propose (and give in our future publications) is a 
+classical form of the likelihood to be used when using the time-delay 
+measurements in a modeling. If we assume that all errors are Gaussian, 
+this would looks like:
 
 \begin{equation}
 p(\dt{model} | \mathrm{obs}) = \frac{1}{(2 \pi)^{n/2} 
@@ -200,55 +209,61 @@ p(\dt{model} | \mathrm{obs}) = \frac{1}{(2 \pi)^{n/2}
 \end{equation}
 
 where $\Sigma \approx \textrm{Cov}(\dt{obs})$ is an estimation of the 
-covariance that we would give.
+covariance that we would provide.
 
 
-\begin{itemize}
-\item We \emph{think} that writing this using 3 \emph{independent} 
-delays such as (AB, AC, 
-AD) is correct, and the associated 3x3 covariance matrix does in fact 
+
+We \emph{think} that writing this using 3 \emph{independent} 
+delays such as [AB, AC, 
+AD] is correct, and the associated 3x3 covariance matrix does in fact 
 capture the full information contained in our measurements, \emph{even 
 if the light curve of A is of poor quality and the choice of BA, BC, BD 
-seems apparently ``better''}. Mock tests showed that the choice of A as 
-a reference does not 
+seems apparently ``better''}. Mock tests showed that the choice of A, 
+B, C or D as 
+a reference should not 
 matter, as long as the 3x3 covariance matrix is given together with the 
 3 delay estimates.
 
-
-\item For 6 delays, the covariance matrix would be 6x6. But this matrix 
+For 6 delays, the covariance matrix would be 6x6. But this matrix 
 is clearly redundant (BC = AC - AB exactly, for every single 
 measurement). A real covariance matrix would be singular (i.e. det=0 
-thus the matrix is non-invertible) in this case, but our PyCS-way of 
-computing it (being conservative) avoid this. Still, our feeling is 
-that 
-using it in the above equation is wrong and would always result in an 
+thus the matrix is non-invertible) in this case, but our way of 
+computing it in PyCS avoids this singularity property. Still, our 
+feeling is 
+that using it in the above equation is wrong and would always result in 
+an 
 overly 
 tight likelihood.
 
 To the best of our knowledge, there is no way to modify the equation 
-above to properly take into account that redundancy in the 6 delays. We 
-will will then instead provide the four 3x3 sub-matrices, i.e. and 
+above to properly take into account that redundancy in the 6 delays. 
+Thus, we 
+will will then instead provide the four 3x3 sub-matrices of delays and 
+covariance coefficients and 
 say that we recommend 
 either to pick a reference image, or (better!) to run the analysis with 
-the four images as reference turn in turn and take the average. 
-\com{vb}{or even better, to run the analysis with all the possible 
-independent combinations of time delays ?}
+the four images as reference one after the other and take the average. 
+Running the analysis with all the possible 
+independent combinations of time delays would be the optimal solution 
+but probably a bit of an overkill.
 
-\end{itemize}
 
 \subsection*{Computation of the PyCS covariance matrix}
 
 Initially, we wanted the computation of the covariance matrix 
 coefficients to follow the same 
-principles that we used so far in PyCS (described in Tewes et al. 
-2013). When drawing simulated light curves, we give them "true" delays 
-picked in a chosen range of possible delays, run the optimizers on each 
+principles that we used so far in PyCS: when drawing simulated light 
+curves, we give them "true" delays 
+picked in a chosen range of possible delays around our initial 
+estimation, run the optimizers on each 
 simulation, bin the results according to their true delays and then 
 measure the systematic + random error in each bins. We then combine the 
 worst systematic and worst random error to get the final estimation. 
-When constructing the covariance matrix, we keep this procedure for the 
-diagonal 
-coefficients. For the off-diagonal coefficients, we do a 2d-binning 
+When constructing the covariance matrix, we still keep this 
+procedure for the 
+diagonal coefficients that corresponds to the error on each time-delay 
+measurement. For the off-diagonal coefficients, we do a 2d-binning of 
+true delays
 (since we compute to covariance of two different delays), using larger 
 bins to be 
 sure that we have enough estimates per bins, and compute the covariance 
@@ -268,40 +283,49 @@ that when doing the 2d-binning there are no large variations between the
 coefficients computed from one 2d-bin to another. 
 \end{enumerate}
 
-The second options seems to be the most natural, so we decided to adopt 
+The second options seems to be the less painful, so we decided to adopt 
 it for the time being. If, for some reason two bins give a very 
-discrepant value for an off-diagonal coefficient -in the sense that the 
-resulting time-delay likelihood is significantly different, that will 
+discrepant value -in the sense that the 
+resulting time-delay likelihoods are significantly different, that 
+will 
 be interpreted as a sign that something is going on. Whether we should 
-worry or not will probably depend on which system we analyze. Note 
-that in order to get a scatter in the bins not dominated by random 
-fluctuations, we ought to draw more simulated light curves than before. 
-10'000 seems to be a reasonable number from the testing we performed so 
-far.\\
+worry or not will probably depend on the system we analyze, but in such 
+cases we will probably consider the less constraining likelihood as we 
+still want to be on the safe side. 
+Note that in order to get a scatter from bin to bin not dominated by 
+random fluctuations, we ought to draw more simulated light curves than 
+before. 10'000 seems to be a reasonable number from the testing we 
+performed so far.\\
 
 To give you a visual to chew on, here is the "technical" output plot of 
-PyCS on simulated data:\\
+PyCS we get when applying the technique on fake data:\\
 
 \com{vb}{Add Image}\\
 
 The diagonal panels display the time-delay error distributions versus 
 the binned true delay estimation. The off-diagonal panels display the 
 covariance in each bins. If there are less than a given number of 
-simulations per 
-bins, the value is discarded (i.e. put to zero, written in red). The 
-corresponding delays and mean covariance coefficients on all the 
-simulations is 
-displayed in the title of each panel. For simplicity, the 6x6 matrix of 
-covariances is printed on the right of the plot. The choice of true 
-delay range used in the drawing of the simulations as well as the 
-number of 1d and 2d bins, minimal 
-number of simulations per bins and total number of simulations are 
-up to the PyCS user. Obviously, we don't want that these choices 
-affect too much the results, and making sure that they don't is part of 
-the sanity checks that should be conducted before publishing the final 
-time-delay likelihoods.
+simulations per bins, the value is discarded (artificially put to zero, 
+written in red). That might happen depending on the user choice of bin 
+range and number of bins, and must be seen as an indication that either 
+the number of simulated light curves is too small for the particular 
+binning chosen here or that the binning parameters are not adapted. The 
+time delays errors and mean covariance coefficients are indicated on 
+top of each panel. For simplicity, the $N$x$N$ covariance matrix  
+is printed on the top right of the figure (well, not on this figure 
+because this is an old plot that I cannot redo easily since the piece 
+of code creating the fake data died with my hdd), along with the 
+other input parameters chosen by the PyCS user. Obviously, we do not 
+want that the choice of these input parameters affect too much the 
+resulting matrix, and making sure that they indeed do not is part of 
+the sanity 
+checks that should be conducted before publishing the final time-delay 
+likelihoods.
 
-
+A good test to see if this procedure works is to apply it on real data 
+and see how it impacts the time-delay measurement. That is why I 
+simultaneously posted the covariance matrix of HE0435-1223 in the 
+associated issue thread for Ken to play with when he has the time. 
 
 
 \end{document}
