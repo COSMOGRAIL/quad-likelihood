@@ -339,25 +339,27 @@ covariance coefficients are.\\
 \\
 A bit of terminology: from our generative model, we draw \emph{mock 
 light curves}, or simply \emph{mocks}. We call a collection of 1000 
-mocks a \emph{sample}. Testing our curve-shifting optimizer on a 
-sample $n$, without binning the results, provides \emph{biases 
+mocks a \emph{set}. Testing our curve-shifting optimizer on a 
+set $n$, without binning the results, provides \emph{biases 
 $\vec{b^n}$} and \emph{random errors $\vec{\sigma^n}$} for each 
 measured delay, as well as \emph{covariance coefficients $\vec{cov^n}$} 
 between each pair of delays.\\
 \\
 Let us consider only the measured time delays $\vec{\Delta t_{i}}$ 
 relative to a reference image $i$ that we chose a priori - the choice 
-should not matter. With respect to this reference image, a sample $n$ 
+should not matter. With respect to this reference image, a set $n$ 
 provides then biases $\vec{b^n_i}$, random errors $\vec{\sigma^n_i}$ 
 and covariance coefficients $\vec{cov^n_i}$. For example, in a quad 
-like HE0435-1223, if we chose image A as reference, a sample $n$ 
+like HE0435-1223, if we chose image A as reference, a set $n$ 
 provides a measurement of $\vec{b^n_A} = [b^n_{AB}, b^n_{AC}, 
 b^n_{AD}]$, 
 $\vec{\sigma^n_A} = [\sigma^n_{AB}, \sigma^n_{AC}, \sigma^n_{AD}]$ and 
-$\vec{cov^n_A} = [cov^n_{ABvAC}, cov^n_{ABvAD}, cov^n_{ACvAD}]$. It is 
+$\vec{cov^n_A} = [cov^n_{ABvAC}, cov^n_{ABvAD}, 
+cov^n_{ACvAD}]$\footnote{Note that in the usual covariance formalism, 
+$cov^n_{ABvAB} = {\sigma^n_{AB}}^2$}.  It is 
 important to note that \emph{these 9 values are independent.} In 
 addition, we can compute the average of these vectors over the $N$ 
-samples, named $\vec{b^0_i}$, $\vec{\sigma^0_i}$ and $\vec{cov^0_i}$, 
+sets, named $\vec{b^0_i}$, $\vec{\sigma^0_i}$ and $\vec{cov^0_i}$, 
 where i.e. $\vec{b^0_i} = \Sigma_{n=1}^N \vec{b^n_i}w_i^n \, / \, 
 \Sigma_{n=1}^Nw_i^n$, where for simplicity $w_i^n=1 \,\forall\, i,n$. 
 To ease the notation, let us concatenate these vectors into a single 
@@ -370,17 +372,19 @@ cov^n_{ACvAD}]$. We can similarly compute $\vec{X^0_i}$ by averaging
 over the $\vec{X^n_i}$.\\
 \\
 With these definitions in hand, we can compute the likelihood 
-$P_i(\vec{\Delta t_{i}^{meas}}|\vec{\Delta t_{i}}) = P_i$ of modeled 
-time delays $\vec{\Delta t_{i}^{meas}}$ with respect to measured time 
+$P_i(\vec{\Delta t_{i}^{model}}|\vec{\Delta t_{i}}) = P_i$ of modeled 
+time delays $\vec{\Delta t_{i}^{model}}$ with respect to measured time 
 delays $\vec{\Delta t_{i}}$ with the following equations:
+
 
 \begin{equation*}
  P_i = N_{\Delta 
 t_{i}}\int d\vec{X_i}\,exp\left[-\frac{1}{2}(\vec{\Delta 
-t_i^{meas}}-\vec{\Delta t_i}-\vec{b_i})^T C(\vec{\sigma_i}+\!\!+ 
-\vec{cov_i})^{-1}(\vec{\Delta 
-t_i^{meas}}-\vec{\Delta t_i}-\vec{b_i})  \right]P(\vec{X_i}),
+t_i^{model}}-\vec{\Delta t_i}-\vec{b_i})^T C(\vec{\Delta 
+t_i})^{-1}(\vec{\Delta 
+t_i^{model}}-\vec{\Delta t_i}-\vec{b_i})  \right]P(\vec{X_i}),
 \end{equation*}
+
 
 where
 \begin{equation*}
@@ -390,10 +394,10 @@ C(\vec{X_i})^{-1} (\vec{X_i}-\vec{X_i^0})\right],
 
 with $N_{\Delta 
 t_{i}}$ and $N_X$ being normalization constants that we can safely 
-ignore in practice, and $C(\vec{\sigma_i}+\!\!+ 
-\vec{cov_i})$ and $C(\vec{X_i})$ being the covariance matrices of 
-the elements in $\vec{\sigma_i}+\!\!+ 
-\vec{cov_i}$ and $\vec{X_i}$, respectively. Note that the $n$ upper 
+ignore in practice, and $C(\vec{\Delta 
+t_i})$ and $C(\vec{X_i})$ being the covariance matrices of 
+the elements in $\vec{\Delta 
+t_i}$ and $\vec{X_i}$, respectively. Note that the $n$ upper 
 index has been removed in the equations above for them to make sense 
 mathematically, but a numerical resolution of this integral would 
 replace the integration over $d\vec{X_i}$ by a sum over $\vec{X_i^n}$.\\
@@ -403,7 +407,26 @@ would be best if we could integrate the equation above, which
 \emph{might} be possible if all the variables are indeed independent 
 and have a Gaussian uncertainty distribution. This remains to be 
 verified, though. Otherwise, one could still integrate numerically and 
-fit the numerical likelihood with a chosen profile.
+fit the numerical likelihood with a chosen profile.\\
+\\
+One possible simplification of the equations above is to consider that 
+the variance of the random errors $\vec{\sigma^n_i}$ and covariance 
+coefficients $\vec{cov^n_i}$ is less important to implement than the 
+variance of the bias $\vec{b^n_i}$. In such a case, we could 
+approximate $\vec{\sigma^n_i} \simeq \vec{\sigma^0_i}$ and 
+$\vec{cov^n_i} \simeq \vec{cov^0_i} \ \forall i$. As a result, the 
+covariance matrix of the measured delays $C(\vec{\Delta 
+t_i})$ becomes a constant $C \simeq C(\vec{\Delta 
+t^0_i})$, i.e. the covariance matrix of all the measured delays over 
+all sets. There is also no need to integrate over $\vec{\sigma^n_i}$ 
+and $\vec{cov^n_i}$, thus $d\vec{X_i}$ becomes simply $d\vec{b_i}$, 
+$P(\vec{X_i})$ becomes $P(\vec{b_i})$ and $C(\vec{X_i})$ becomes 
+$C(\vec{b_i})$. This simplification has the advantage allowing a direct 
+analytic integration of the likelihood expression.   \\
+\\
+TODO: develop equation above with $C(\vec{\Delta t^0_i})$ written as 
+$C_{ij}$ for quads and double.
+
 
 \subsection{Pros and cons}
 
@@ -423,8 +446,9 @@ tested more intensively using both formalism on TDC data.
 
 \subsection{TODO}
 \begin{itemize}
- \item \textbf{VB} - draw ~1000 samples of 1000 mocks each. Ongoing on 
-WFI2033, takes a lot of time.
+ \item \textbf{VB} - draw ~1000 sets of 1000 mocks each. Ongoing on 
+WFI2033, takes a lot of time on a single laptop. Will be 
+parallellized and run on clusters.
  \item \textbf{VB} - check the $\vec{b^n_i}$, $\vec{\sigma^n_i}$ and 
 $\vec{cov^n_i}$ follow a Gaussian distribution and estimate their 
 variance around the $\vec{b^0_i}$, $\vec{\sigma^0_i}$ and 
